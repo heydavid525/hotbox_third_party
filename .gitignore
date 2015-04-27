@@ -1,3 +1,9 @@
+lib/
+share/
+src/
+include/
+bin/
+
 # Compiled Object files
 *.slo
 *.lo
