@@ -17,6 +17,7 @@ third_party_core: path \
 third_party_all: third_party_core \
                   oprofile \
 									boost \
+									eigen
 
 distclean:
 	rm -rf $(THIRD_PARTY_INCLUDE) $(THIRD_PARTY_LIB) $(THIRD_PARTY_BIN) \
@@ -49,6 +50,18 @@ $(BOOST_INCLUDE): $(BOOST_SRC)
 	./bootstrap.sh \
 		--prefix=$(THIRD_PARTY); \
 	./b2 install
+
+# ==================== boost ====================
+
+EIGEN_SRC = $(THIRD_PARTY_CENTRAL)/eigen-3.2.4.tar.bz2
+EIGEN_INCLUDE = $(THIRD_PARTY_INCLUDE)/eigen
+
+eigen: $(EIGEN_INCLUDE)
+
+$(EIGEN_INCLUDE): $(EIGEN_SRC)
+	tar jxf $< -C $(THIRD_PARTY_SRC)
+	cp -r $(THIRD_PARTY_SRC)/eigen-eigen-10219c95fe65/Eigen \
+		$(THIRD_PARTY_INCLUDE)/
 
 # ==================== fastapprox ===================
 
