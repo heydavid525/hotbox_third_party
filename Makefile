@@ -11,6 +11,7 @@ third_party_core: path \
                   gperftools \
 								  snappy \
                   sparsehash \
+									zeromq \
 									fastapprox
 
 
