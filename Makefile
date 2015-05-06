@@ -5,19 +5,26 @@ THIRD_PARTY_INCLUDE = $(THIRD_PARTY)/include
 THIRD_PARTY_LIB = $(THIRD_PARTY)/lib
 THIRD_PARTY_BIN = $(THIRD_PARTY)/bin
 
+all: third_party_all
+
 third_party_core: path \
 	                gflags \
                   glog \
                   gperftools \
 								  snappy \
                   sparsehash \
-									fastapprox
+									fastapprox	\
+									eigen \
+									zeromq
 
 
 third_party_all: third_party_core \
                   oprofile \
 									boost \
-									eigen
+                  libconfig \
+									cuckoo \
+									yaml-cpp \
+									leveldb
 
 distclean:
 	rm -rf $(THIRD_PARTY_INCLUDE) $(THIRD_PARTY_LIB) $(THIRD_PARTY_BIN) \
@@ -25,9 +32,7 @@ distclean:
 
 # These might not build.
 third_party_unused: gtest \
-										libcuckoo \
 										iftop \
-										leveldb
 
 .PHONY: third_party_core third_party_all third_party_unused distclean
 
@@ -51,10 +56,24 @@ $(BOOST_INCLUDE): $(BOOST_SRC)
 		--prefix=$(THIRD_PARTY); \
 	./b2 install
 
-# ==================== boost ====================
+# ===================== cuckoo =====================
+
+CUCKOO_SRC = $(THIRD_PARTY_CENTRAL)/libcuckoo.tar
+CUCKOO_INCLUDE = $(THIRD_PARTY_INCLUDE)/libcuckoo
+
+cuckoo: $(CUCKOO_INCLUDE)
+
+$(CUCKOO_INCLUDE): $(CUCKOO_SRC)
+	tar xf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	autoreconf -fis; \
+	./configure --prefix=$(THIRD_PARTY); \
+	make; make install
+
+# ==================== eigen ====================
 
 EIGEN_SRC = $(THIRD_PARTY_CENTRAL)/eigen-3.2.4.tar.bz2
-EIGEN_INCLUDE = $(THIRD_PARTY_INCLUDE)/eigen
+EIGEN_INCLUDE = $(THIRD_PARTY_INCLUDE)/Eigen
 
 eigen: $(EIGEN_INCLUDE)
 
@@ -115,11 +134,53 @@ $(GPERFTOOLS_LIB): $(GPERFTOOLS_SRC)
 	./configure --prefix=$(THIRD_PARTY) --enable-frame-pointers; \
 	make install
 
+# ==================== leveldb ===================
+
+LEVELDB_SRC = $(THIRD_PARTY_CENTRAL)/leveldb-1.18.tar.gz
+LEVELDB_LIB = $(THIRD_PARTY_LIB)/libleveldb.so
+
+leveldb: $(LEVELDB_LIB)
+
+$(LEVELDB_LIB): $(LEVELDB_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	LIBRARY_PATH=$(THIRD_PARTY_LIB):${LIBRARY_PATH} \
+	make; \
+	cp ./libleveldb.* $(THIRD_PARTY_LIB)/; \
+	cp -r include/* $(THIRD_PARTY_INCLUDE)/
+
+# ==================== libconfig ===================
+
+LIBCONFIG_SRC = $(THIRD_PARTY_CENTRAL)/libconfig-1.4.9.tar.gz
+LIBCONFIG_LIB = $(THIRD_PARTY_LIB)/libconfig++.so
+
+libconfig: $(LIBCONFIG_LIB)
+
+$(LIBCONFIG_LIB): $(LIBCONFIG_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	./configure --prefix=$(THIRD_PARTY) --enable-frame-pointers; \
+	make install
+
+# ==================== yaml-cpp ===================
+
+YAMLCPP_SRC = $(THIRD_PARTY_CENTRAL)/yaml-cpp-0.5.1.tar.gz
+YAMLCPP_MK = $(THIRD_PARTY_CENTRAL)/yaml-cpp.mk
+YAMLCPP_LIB = $(THIRD_PARTY_LIB)/libyaml-cpp.a
+
+yaml-cpp: boost $(YAMLCPP_LIB)
+
+$(YAMLCPP_LIB): $(YAMLCPP_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	make -f $(YAMLCPP_MK) BOOST_PREFIX=$(THIRD_PARTY) TARGET=$@; \
+	cp -r include/* $(THIRD_PARTY_INCLUDE)/
+
 # =================== oprofile ===================
 # NOTE: need libpopt-dev binutils-dev
 
 OPROFILE_SRC = $(THIRD_PARTY_CENTRAL)/oprofile-1.0.0.tar.gz
-OPROFILE_LIB = $(THIRD_PARTY_LIB)/oprofile
+OPROFILE_LIB = $(THIRD_PARTY_LIB)/libprofiler.so
 
 oprofile: $(OPROFILE_LIB)
 
@@ -187,19 +248,6 @@ $(GTEST_LIB): $(GTEST_SRC)
 	cp -r ../include/* $(THIRD_PARTY_INCLUDE)/; \
 	cp gtest_main.a $@
 
-# ===================== libcuckoo =====================
-
-CUCKOO_SRC = $(THIRD_PARTY_CENTRAL)/libcuckoo.tar
-CUCKOO_INCLUDE = $(THIRD_PARTY_INCLUDE)/libcuckoo
-
-cuckoo: $(CUCKOO_INCLUDE)
-
-$(CUCKOO_INCLUDE): $(CUCKOO_SRC)
-	tar xf $< -C $(THIRD_PARTY_SRC)
-	cd $(basename $(basename $<)); \
-	autoreconf -fis; \
-	./configure --prefix=$(THIRD_PARTY); \
-	make; make install
 
 # ================== iftop ==================
 
@@ -215,17 +263,3 @@ $(IFTOP_BIN): $(IFTOP_SRC)
 	make install; \
 	cp iftop $(IFTOP_BIN)
 
-# ==================== leveldb ===================
-
-LEVELDB_SRC = $(THIRD_PARTY_CENTRAL)/leveldb-1.15.0.tar.gz
-LEVELDB_LIB = $(THIRD_PARTY_LIB)/libleveldb.so
-
-leveldb: $(LEVELDB_LIB)
-
-$(LEVELDB_LIB): $(LEVELDB_SRC)
-	tar zxf $< -C $(THIRD_PARTY_SRC)
-	cd $(basename $(basename $<)); \
-	LIBRARY_PATH=$(THIRD_PARTY_LIB):${LIBRARY_PATH} \
-	make; \
-	cp ./libleveldb.* $(THIRD_PARTY_LIB)/; \
-	cp -r include/* $(THIRD_PARTY_INCLUDE)/
