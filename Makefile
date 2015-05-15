@@ -47,7 +47,7 @@ path:
 BOOST_SRC = $(THIRD_PARTY_CENTRAL)/boost_1_58_0.tar.bz2
 BOOST_INCLUDE = $(THIRD_PARTY_INCLUDE)/boost
 
-boost: $(BOOST_INCLUDE)
+boost: path $(BOOST_INCLUDE)
 
 $(BOOST_INCLUDE): $(BOOST_SRC)
 	tar jxf $< -C $(THIRD_PARTY_SRC)
@@ -61,7 +61,7 @@ $(BOOST_INCLUDE): $(BOOST_SRC)
 CUCKOO_SRC = $(THIRD_PARTY_CENTRAL)/libcuckoo.tar
 CUCKOO_INCLUDE = $(THIRD_PARTY_INCLUDE)/libcuckoo
 
-cuckoo: $(CUCKOO_INCLUDE)
+cuckoo: path $(CUCKOO_INCLUDE)
 
 $(CUCKOO_INCLUDE): $(CUCKOO_SRC)
 	tar xf $< -C $(THIRD_PARTY_SRC)
@@ -75,7 +75,7 @@ $(CUCKOO_INCLUDE): $(CUCKOO_SRC)
 EIGEN_SRC = $(THIRD_PARTY_CENTRAL)/eigen-3.2.4.tar.bz2
 EIGEN_INCLUDE = $(THIRD_PARTY_INCLUDE)/Eigen
 
-eigen: $(EIGEN_INCLUDE)
+eigen: path $(EIGEN_INCLUDE)
 
 $(EIGEN_INCLUDE): $(EIGEN_SRC)
 	tar jxf $< -C $(THIRD_PARTY_SRC)
@@ -87,7 +87,7 @@ $(EIGEN_INCLUDE): $(EIGEN_SRC)
 FASTAPPROX_SRC = $(THIRD_PARTY_CENTRAL)/fastapprox-0.3.2.tar.gz
 FASTAPPROX_INC = $(THIRD_PARTY_INCLUDE)/fastapprox
 
-fastapprox: $(FASTAPPROX_INC)
+fastapprox: path $(FASTAPPROX_INC)
 
 $(FASTAPPROX_INC): $(FASTAPPROX_SRC)
 	tar xzf $< -C $(THIRD_PARTY_SRC)
@@ -100,7 +100,7 @@ $(FASTAPPROX_INC): $(FASTAPPROX_SRC)
 GFLAGS_SRC = $(THIRD_PARTY_CENTRAL)/gflags-2.0.tar.gz
 GFLAGS_LIB = $(THIRD_PARTY_LIB)/libgflags.so
 
-gflags: $(GFLAGS_LIB)
+gflags: path $(GFLAGS_LIB)
 
 $(GFLAGS_LIB): $(GFLAGS_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
@@ -126,7 +126,7 @@ $(GLOG_LIB): $(GLOG_SRC)
 GPERFTOOLS_SRC = $(THIRD_PARTY_CENTRAL)/gperftools-2.4.tar.gz
 GPERFTOOLS_LIB = $(THIRD_PARTY_LIB)/libtcmalloc.so
 
-gperftools: $(GPERFTOOLS_LIB)
+gperftools: path $(GPERFTOOLS_LIB)
 
 $(GPERFTOOLS_LIB): $(GPERFTOOLS_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
@@ -139,7 +139,7 @@ $(GPERFTOOLS_LIB): $(GPERFTOOLS_SRC)
 LEVELDB_SRC = $(THIRD_PARTY_CENTRAL)/leveldb-1.18.tar.gz
 LEVELDB_LIB = $(THIRD_PARTY_LIB)/libleveldb.so
 
-leveldb: $(LEVELDB_LIB)
+leveldb: path $(LEVELDB_LIB)
 
 $(LEVELDB_LIB): $(LEVELDB_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
@@ -154,7 +154,7 @@ $(LEVELDB_LIB): $(LEVELDB_SRC)
 LIBCONFIG_SRC = $(THIRD_PARTY_CENTRAL)/libconfig-1.4.9.tar.gz
 LIBCONFIG_LIB = $(THIRD_PARTY_LIB)/libconfig++.so
 
-libconfig: $(LIBCONFIG_LIB)
+libconfig: path $(LIBCONFIG_LIB)
 
 $(LIBCONFIG_LIB): $(LIBCONFIG_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
@@ -182,7 +182,7 @@ $(YAMLCPP_LIB): $(YAMLCPP_SRC)
 OPROFILE_SRC = $(THIRD_PARTY_CENTRAL)/oprofile-1.0.0.tar.gz
 OPROFILE_LIB = $(THIRD_PARTY_LIB)/libprofiler.so
 
-oprofile: $(OPROFILE_LIB)
+oprofile: path $(OPROFILE_LIB)
 
 $(OPROFILE_LIB): $(OPROFILE_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
@@ -195,7 +195,7 @@ $(OPROFILE_LIB): $(OPROFILE_SRC)
 SPARSEHASH_SRC = $(THIRD_PARTY_CENTRAL)/sparsehash-2.0.2.tar.gz
 SPARSEHASH_INCLUDE = $(THIRD_PARTY_INCLUDE)/sparsehash
 
-sparsehash: $(SPARSEHASH_INCLUDE)
+sparsehash: path $(SPARSEHASH_INCLUDE)
 
 $(SPARSEHASH_INCLUDE): $(SPARSEHASH_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
@@ -208,7 +208,7 @@ $(SPARSEHASH_INCLUDE): $(SPARSEHASH_SRC)
 SNAPPY_SRC = $(THIRD_PARTY_CENTRAL)/snappy-1.1.2.tar.gz
 SNAPPY_LIB = $(THIRD_PARTY_LIB)/libsnappy.so
 
-snappy: $(SNAPPY_LIB)
+snappy: path $(SNAPPY_LIB)
 
 $(SNAPPY_LIB): $(SNAPPY_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
@@ -221,7 +221,7 @@ $(SNAPPY_LIB): $(SNAPPY_SRC)
 ZMQ_SRC = $(THIRD_PARTY_CENTRAL)/zeromq-3.2.5.tar.gz
 ZMQ_LIB = $(THIRD_PARTY_LIB)/libzmq.so
 
-zeromq: $(ZMQ_LIB)
+zeromq: path $(ZMQ_LIB)
 
 $(ZMQ_LIB): $(ZMQ_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
@@ -238,7 +238,7 @@ $(ZMQ_LIB): $(ZMQ_SRC)
 GTEST_SRC = $(THIRD_PARTY_CENTRAL)/gtest-1.7.0.tar
 GTEST_LIB = $(THIRD_PARTY_LIB)/libgtest_main.a
 
-gtest: $(GTEST_LIB)
+gtest: path $(GTEST_LIB)
 
 $(GTEST_LIB): $(GTEST_SRC)
 	tar xf $< -C $(THIRD_PARTY_SRC)
@@ -254,7 +254,7 @@ $(GTEST_LIB): $(GTEST_SRC)
 IFTOP_SRC = $(THIRD_PARTY_CENTRAL)/iftop-1.0pre4.tar.gz
 IFTOP_BIN = $(THIRD_PARTY_BIN)/iftop
 
-iftop: $(IFTOP_BIN)
+iftop: path $(IFTOP_BIN)
 
 $(IFTOP_BIN): $(IFTOP_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
