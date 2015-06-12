@@ -62,7 +62,9 @@ $(BOOST_INCLUDE): $(BOOST_SRC)
 CUCKOO_SRC = $(THIRD_PARTY_CENTRAL)/libcuckoo.tar
 CUCKOO_INCLUDE = $(THIRD_PARTY_INCLUDE)/libcuckoo
 
-cuckoo: path $(CUCKOO_INCLUDE)
+cuckoo: path $(CUCKOO_SRC)
+	tar xf $(CUCKOO_SRC) -C $(THIRD_PARTY_SRC); \
+	cp -r $(THIRD_PARTY_SRC)/libcuckoo/libcuckoo $(THIRD_PARTY_INCLUDE)/
 
 $(CUCKOO_INCLUDE): $(CUCKOO_SRC)
 	tar xf $< -C $(THIRD_PARTY_SRC)
