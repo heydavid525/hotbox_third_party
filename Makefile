@@ -24,7 +24,8 @@ third_party_all: third_party_core \
                   libconfig \
 									cuckoo \
 									yaml-cpp \
-									leveldb
+									leveldb \
+									float_compressor
 
 distclean:
 	rm -rf $(THIRD_PARTY_INCLUDE) $(THIRD_PARTY_LIB) $(THIRD_PARTY_BIN) \
@@ -94,6 +95,13 @@ $(FASTAPPROX_INC): $(FASTAPPROX_SRC)
 	mkdir $(THIRD_PARTY_INCLUDE)/fastapprox
 	cp $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<)))/src/*.h \
 		$(THIRD_PARTY_INCLUDE)/fastapprox
+
+# ==================== float_compressor ====================
+
+FC_SRC = $(THIRD_PARTY_CENTRAL)/float16_compressor.hpp
+
+float_compressor: path
+	cp $(THIRD_PARTY_CENTRAL)/float16_compressor.hpp $(THIRD_PARTY_INCLUDE)/
 
 # ===================== gflags ===================
 
