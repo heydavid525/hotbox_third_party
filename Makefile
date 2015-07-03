@@ -228,7 +228,7 @@ $(SNAPPY_LIB): $(SNAPPY_SRC)
 
 # ==================== zeromq ====================
 
-ZMQ_SRC = $(THIRD_PARTY_CENTRAL)/zeromq-3.2.5.tar.gz
+ZMQ_SRC = $(THIRD_PARTY_CENTRAL)/zeromq-4.1.2.tar.gz
 ZMQ_LIB = $(THIRD_PARTY_LIB)/libzmq.so
 
 zeromq: path $(ZMQ_LIB)
@@ -236,9 +236,23 @@ zeromq: path $(ZMQ_LIB)
 $(ZMQ_LIB): $(ZMQ_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
-	./configure --prefix=$(THIRD_PARTY); \
+	./configure --prefix=$(THIRD_PARTY) --without-libsodium; \
 	make install
 	cp $(THIRD_PARTY_CENTRAL)/zmq.hpp $(THIRD_PARTY_INCLUDE)
+
+# ==================== zeromq-3.2.5 ====================
+
+#ZMQ_SRC = $(THIRD_PARTY_CENTRAL)/zeromq-3.2.5.tar.gz
+#ZMQ_LIB = $(THIRD_PARTY_LIB)/libzmq.so
+#
+#zeromq: path $(ZMQ_LIB)
+#
+#$(ZMQ_LIB): $(ZMQ_SRC)
+#	tar zxf $< -C $(THIRD_PARTY_SRC)
+#	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+#	./configure --prefix=$(THIRD_PARTY); \
+#	make install
+#	cp $(THIRD_PARTY_CENTRAL)/zmq.hpp $(THIRD_PARTY_INCLUDE)
 
 
 ####################### Unused #####################
