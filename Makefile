@@ -25,7 +25,8 @@ third_party_all: third_party_core \
 									cuckoo \
 									yaml-cpp \
 									leveldb \
-									float_compressor
+									float_compressor \
+									openblas
 
 distclean:
 	rm -rf $(THIRD_PARTY_INCLUDE) $(THIRD_PARTY_LIB) $(THIRD_PARTY_BIN) \
@@ -197,8 +198,21 @@ oprofile: path $(OPROFILE_LIB)
 $(OPROFILE_LIB): $(OPROFILE_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
-	./configure --prefix=$(THIRD_PARTY); \
+	./configure --prefix=$(THIRD_PARTY) && \
 	make install
+
+# ==================== openblas ===================
+# NOTE: need binutils-dev (libiberty)
+
+OPENBLAS_SRC = $(THIRD_PARTY_CENTRAL)/open_blas-0.2.14.tar.gz
+OPENBLAS_LIB = $(THIRD_PARTY_LIB)/libopenblas.so
+
+openblas: path $(OPENBLAS_LIB)
+
+$(OPENBLAS_LIB): $(OPENBLAS_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	make && make install PREFIX=$(THIRD_PARTY)
 
 # ================== sparsehash ==================
 
