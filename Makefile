@@ -27,7 +27,8 @@ third_party_all: third_party_core \
 									leveldb \
 									float_compressor \
 									openblas \
-									protobuf
+									protobuf \
+									gtest
 
 distclean:
 	rm -rf $(THIRD_PARTY_INCLUDE) $(THIRD_PARTY_LIB) $(THIRD_PARTY_BIN) \
@@ -145,6 +146,21 @@ $(GPERFTOOLS_LIB): $(GPERFTOOLS_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./configure --prefix=$(THIRD_PARTY) --enable-frame-pointers; \
 	make install
+
+# ===================== gtest ====================
+
+GTEST_SRC = $(THIRD_PARTY_CENTRAL)/gtest-1.7.0.zip
+GTEST_LIB = $(THIRD_PARTY_LIB)/libgtest_main.a
+
+gtest: path $(GTEST_LIB)
+
+$(GTEST_LIB): $(GTEST_SRC)
+	unzip $< -d $(THIRD_PARTY_SRC)
+	cd $(basename $<)/make; \
+	make; \
+	./sample1_unittest; \
+	cp -r ../include/* $(THIRD_PARTY_INCLUDE)/; \
+	cp gtest_main.a $@
 
 # ==================== leveldb ===================
 
@@ -285,20 +301,6 @@ $(ZMQ_LIB): $(ZMQ_SRC)
 
 ####################### Unused #####################
 
-# ===================== gtest ====================
-
-GTEST_SRC = $(THIRD_PARTY_CENTRAL)/gtest-1.7.0.tar
-GTEST_LIB = $(THIRD_PARTY_LIB)/libgtest_main.a
-
-gtest: path $(GTEST_LIB)
-
-$(GTEST_LIB): $(GTEST_SRC)
-	tar xf $< -C $(THIRD_PARTY_SRC)
-	cd $(basename $<)/make; \
-	make; \
-	./sample1_unittest; \
-	cp -r ../include/* $(THIRD_PARTY_INCLUDE)/; \
-	cp gtest_main.a $@
 
 
 # ================== iftop ==================
