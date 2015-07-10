@@ -26,7 +26,8 @@ third_party_all: third_party_core \
 									yaml-cpp \
 									leveldb \
 									float_compressor \
-									openblas
+									openblas \
+									protobuf
 
 distclean:
 	rm -rf $(THIRD_PARTY_INCLUDE) $(THIRD_PARTY_LIB) $(THIRD_PARTY_BIN) \
@@ -213,6 +214,19 @@ $(OPENBLAS_LIB): $(OPENBLAS_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	make && make install PREFIX=$(THIRD_PARTY)
+
+# =================== protobuf ===================
+
+PROTOBUF_SRC = $(THIRD_PARTY_CENTRAL)/protobuf-2.6.1.tar.gz
+PROTOBUF_LIB = $(THIRD_PARTY_LIB)/libprotobuf.so
+
+protobuf: path $(PROTOBUF_LIB)
+
+$(PROTOBUF_LIB): $(PROTOBUF_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	./configure --prefix=$(THIRD_PARTY) && \
+	make && make check && make install
 
 # ================== sparsehash ==================
 
