@@ -5,16 +5,14 @@ THIRD_PARTY_INCLUDE = $(THIRD_PARTY)/include
 THIRD_PARTY_LIB = $(THIRD_PARTY)/lib
 THIRD_PARTY_BIN = $(THIRD_PARTY)/bin
 
-all: third_party_all
+all: third_party_core
 
 third_party_core: path \
 	                gflags \
                   glog \
                   gperftools \
 								  snappy \
-                  sparsehash \
-									fastapprox	\
-									eigen \
+									protobuf \
 									zeromq
 
 
@@ -27,7 +25,9 @@ third_party_all: third_party_core \
 									leveldb \
 									float_compressor \
 									openblas \
-									protobuf \
+                  sparsehash \
+									eigen \
+									fastapprox	\
 									gtest
 
 distclean:
