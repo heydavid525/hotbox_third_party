@@ -10,6 +10,7 @@ all: third_party_core
 third_party_core: path \
 	                gflags \
                   glog \
+									gtest \
                   gperftools \
 								  snappy \
 									protobuf \
@@ -28,15 +29,13 @@ third_party_all: third_party_core \
                   sparsehash \
 									eigen \
 									fastapprox	\
-									gtest
 
 distclean:
 	rm -rf $(THIRD_PARTY_INCLUDE) $(THIRD_PARTY_LIB) $(THIRD_PARTY_BIN) \
 		$(THIRD_PARTY_SRC) $(THIRD_PARTY)/share
 
 # These might not build.
-third_party_unused: gtest \
-										iftop \
+third_party_unused: iftop
 
 .PHONY: third_party_core third_party_all third_party_unused distclean
 
@@ -151,16 +150,20 @@ $(GPERFTOOLS_LIB): $(GPERFTOOLS_SRC)
 
 GTEST_SRC = $(THIRD_PARTY_CENTRAL)/gtest-1.7.0.zip
 GTEST_LIB = $(THIRD_PARTY_LIB)/libgtest_main.a
+GTEST_LIB2 = $(THIRD_PARTY_LIB)/libgtest.a
 
 gtest: path $(GTEST_LIB)
 
 $(GTEST_LIB): $(GTEST_SRC)
+	rm -rf $(THIRD_PARTY_SRC)/$(basename $(notdir $<))
+	rm -rf $(THIRD_PARTY_INCLUDE)/gtest
 	unzip $< -d $(THIRD_PARTY_SRC)
-	cd $(basename $<)/make; \
-	make; \
+	cd $(basename $(THIRD_PARTY_SRC)/$(notdir $<))/make; \
+	make; make gtest.a; \
 	./sample1_unittest; \
 	cp -r ../include/* $(THIRD_PARTY_INCLUDE)/; \
-	cp gtest_main.a $@
+	cp gtest_main.a $@; \
+	cp gtest.a $(GTEST_LIB2)
 
 # ==================== leveldb ===================
 
