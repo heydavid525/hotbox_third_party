@@ -13,11 +13,12 @@ third_party_core: path \
 									gtest \
                   gperftools \
 								  snappy \
-									protobuf \
+									protobuf3 \
 									zeromq
 
 
 third_party_all: third_party_core \
+									protobuf \
                   oprofile \
 									boost \
                   libconfig \
@@ -244,6 +245,20 @@ protobuf: path $(PROTOBUF_LIB)
 $(PROTOBUF_LIB): $(PROTOBUF_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	./configure --prefix=$(THIRD_PARTY) && \
+	make && make check && make install
+
+# =================== protobuf3 ===================
+
+PROTOBUF3_SRC = $(THIRD_PARTY_CENTRAL)/protobuf-3.0.0-beta-1.tar.gz
+PROTOBUF3_LIB = $(THIRD_PARTY_LIB)/libprotobuf-lite.a
+
+protobuf3: path $(PROTOBUF3_LIB)
+
+$(PROTOBUF3_LIB): $(PROTOBUF3_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	./autogen.sh ; \
 	./configure --prefix=$(THIRD_PARTY) && \
 	make && make check && make install
 
