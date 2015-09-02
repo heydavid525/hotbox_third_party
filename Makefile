@@ -260,7 +260,11 @@ $(PROTOBUF3_LIB): $(PROTOBUF3_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./autogen.sh ; \
 	./configure --prefix=$(THIRD_PARTY) && \
-	make && make check && make install
+	make && make check && make install; \
+	cd python; \
+	python setup.py build; \
+	python setup.py test; \
+	cp -r build/lib/* $(THIRD_PARTY_INCLUDE)
 
 # ================== sparsehash ==================
 
