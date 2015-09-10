@@ -13,6 +13,7 @@ third_party_core: path \
 									gtest \
                   gperftools \
 								  snappy \
+									boost \
 									protobuf3 \
 									zeromq
 
@@ -20,7 +21,6 @@ third_party_core: path \
 third_party_all: third_party_core \
 									protobuf \
                   oprofile \
-									boost \
                   libconfig \
 									cuckoo \
 									yaml-cpp \
@@ -29,7 +29,7 @@ third_party_all: third_party_core \
 									openblas \
                   sparsehash \
 									eigen \
-									fastapprox	\
+									fastapprox
 
 distclean:
 	rm -rf $(THIRD_PARTY_INCLUDE) $(THIRD_PARTY_LIB) $(THIRD_PARTY_BIN) \
