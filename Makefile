@@ -50,7 +50,7 @@ path:
 
 # ==================== boost ====================
 
-BOOST_SRC = $(THIRD_PARTY_CENTRAL)/boost_1_59_0.tar.bz2
+BOOST_SRC = $(THIRD_PARTY_CENTRAL)/boost_1_57_0.tar.bz2
 BOOST_INCLUDE = $(THIRD_PARTY_INCLUDE)/boost
 
 boost: path $(BOOST_INCLUDE)
@@ -129,9 +129,9 @@ float_compressor: path
 # ===================== folly =====================
 
 FOLLY_SRC = $(THIRD_PARTY_CENTRAL)/folly-0.57.0.tar.gz
-#FOLLY_LIB = $(THIRD_PARTY_LIB)/libdouble-conversion.so
+FOLLY_LIB = $(THIRD_PARTY_LIB)/libfolly.so
 
-folly: path #$(FOLLY_LIB)
+folly: path $(FOLLY_LIB)
 
 $(FOLLY_LIB): double-conversion $(FOLLY_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
@@ -140,7 +140,7 @@ $(FOLLY_LIB): double-conversion $(FOLLY_SRC)
 	CPPFLAGS=-I$(THIRD_PARTY_INCLUDE) LD_LIBRARY_PATH=$(THIRD_PARTY_LIB) \
 	LDFLAGS=-L$(THIRD_PARTY_LIB) ./configure --prefix=$(THIRD_PARTY) \
 	--with-boost-libdir=$(THIRD_PARTY_LIB); \
-	make -j4 && make -j4 check && make install
+	make -j4 && make check && make install
 
 # ===================== gflags ===================
 
