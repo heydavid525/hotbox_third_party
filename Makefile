@@ -15,7 +15,8 @@ third_party_core: path \
 								  snappy \
 									boost \
 									protobuf3 \
-									zeromq
+									zeromq \
+									folly
 
 
 third_party_all: third_party_core \
@@ -29,7 +30,8 @@ third_party_all: third_party_core \
 									openblas \
                   sparsehash \
 									eigen \
-									fastapprox
+									fastapprox \
+									double-conversion
 
 distclean:
 	rm -rf $(THIRD_PARTY_INCLUDE) $(THIRD_PARTY_LIB) $(THIRD_PARTY_BIN) \
@@ -76,6 +78,21 @@ $(CUCKOO_INCLUDE): $(CUCKOO_SRC)
 	./configure --prefix=$(THIRD_PARTY); \
 	make; make install
 
+# ==================== double-conversion ===================
+
+DCONVERT_SRC = $(THIRD_PARTY_CENTRAL)/double-conversion-1.1.5.tar.gz
+DCONVERT_LIB = $(THIRD_PARTY_LIB)/libdouble-conversion.so
+
+double-conversion: path $(DCONVERT_LIB)
+
+$(DCONVERT_LIB): $(DCONVERT_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	scons DESTDIR=. install; \
+	cp usr/local/lib/* $(THIRD_PARTY_LIB); \
+	mkdir -p $(THIRD_PARTY_INCLUDE)/double-conversion; \
+	cp src/double-conversion.h $(THIRD_PARTY_INCLUDE)/double-conversion
+
 # ==================== eigen ====================
 
 EIGEN_SRC = $(THIRD_PARTY_CENTRAL)/eigen-3.2.4.tar.bz2
@@ -107,6 +124,22 @@ FC_SRC = $(THIRD_PARTY_CENTRAL)/float16_compressor.hpp
 
 float_compressor: path
 	cp $(THIRD_PARTY_CENTRAL)/float16_compressor.hpp $(THIRD_PARTY_INCLUDE)/
+
+# ===================== folly =====================
+
+FOLLY_SRC = $(THIRD_PARTY_CENTRAL)/folly-0.57.0.tar.gz
+FOLLY_LIB = $(THIRD_PARTY_LIB)/libdouble-conversion.so
+
+folly: path $(DCONVERT_LIB)
+
+$(FOLLY_LIB): double-convert $(FOLLY_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	autoreconf -ivf; \
+	CPPFLAGS=-I$(THIRD_PARTY_INCLUDE) LD_LIBRARY_PATH=$(THIRD_PARTY_LIB) \
+	LDFLAGS=-L$(THIRD_PARTY_LIB) ./configure --prefix=$(THIRD_PARTY) \
+	--with-boost-libdir=$(THIRD_PARTY_LIB); \
+	make -j4 && make -j4 check && make install
 
 # ===================== gflags ===================
 
@@ -263,7 +296,6 @@ $(PROTOBUF3_LIB): $(PROTOBUF3_SRC)
 	make && make check && make install; \
 	cd python; \
 	python setup.py build; \
-	python setup.py test; \
 	cp -r build/lib/* $(THIRD_PARTY_INCLUDE)
 
 # ================== sparsehash ==================
