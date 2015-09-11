@@ -50,7 +50,7 @@ path:
 
 # ==================== boost ====================
 
-BOOST_SRC = $(THIRD_PARTY_CENTRAL)/boost_1_58_0.tar.bz2
+BOOST_SRC = $(THIRD_PARTY_CENTRAL)/boost_1_59_0.tar.bz2
 BOOST_INCLUDE = $(THIRD_PARTY_INCLUDE)/boost
 
 boost: path $(BOOST_INCLUDE)
