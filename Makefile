@@ -91,7 +91,8 @@ $(DCONVERT_LIB): $(DCONVERT_SRC)
 	scons DESTDIR=. install; \
 	cp usr/local/lib/* $(THIRD_PARTY_LIB); \
 	mkdir -p $(THIRD_PARTY_INCLUDE)/double-conversion; \
-	cp src/double-conversion.h $(THIRD_PARTY_INCLUDE)/double-conversion
+	cp src/double-conversion.h $(THIRD_PARTY_INCLUDE)/double-conversion; \
+	cp src/utils.h $(THIRD_PARTY_INCLUDE)/double-conversion
 
 # ==================== eigen ====================
 
@@ -128,13 +129,13 @@ float_compressor: path
 # ===================== folly =====================
 
 FOLLY_SRC = $(THIRD_PARTY_CENTRAL)/folly-0.57.0.tar.gz
-FOLLY_LIB = $(THIRD_PARTY_LIB)/libdouble-conversion.so
+#FOLLY_LIB = $(THIRD_PARTY_LIB)/libdouble-conversion.so
 
-folly: path $(DCONVERT_LIB)
+folly: path #$(FOLLY_LIB)
 
-$(FOLLY_LIB): double-convert $(FOLLY_SRC)
+$(FOLLY_LIB): double-conversion $(FOLLY_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
-	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<)))/folly; \
 	autoreconf -ivf; \
 	CPPFLAGS=-I$(THIRD_PARTY_INCLUDE) LD_LIBRARY_PATH=$(THIRD_PARTY_LIB) \
 	LDFLAGS=-L$(THIRD_PARTY_LIB) ./configure --prefix=$(THIRD_PARTY) \
