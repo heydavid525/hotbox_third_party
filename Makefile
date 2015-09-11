@@ -131,9 +131,9 @@ float_compressor: path
 FOLLY_SRC = $(THIRD_PARTY_CENTRAL)/folly-0.57.0.tar.gz
 FOLLY_LIB = $(THIRD_PARTY_LIB)/libfolly.so
 
-folly: path $(FOLLY_LIB)
+folly: path double-conversion $(FOLLY_LIB)
 
-$(FOLLY_LIB): double-conversion $(FOLLY_SRC)
+$(FOLLY_LIB): $(FOLLY_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<)))/folly; \
 	autoreconf -ivf; \
@@ -294,7 +294,7 @@ $(PROTOBUF3_LIB): $(PROTOBUF3_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./autogen.sh ; \
 	./configure --prefix=$(THIRD_PARTY) && \
-	make && make check && make install; \
+	make -j4 && make check && make install; \
 	cd python; \
 	python setup.py build; \
 	cp -r build/lib/* $(THIRD_PARTY_INCLUDE)
