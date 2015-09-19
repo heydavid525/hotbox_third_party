@@ -16,15 +16,15 @@ third_party_core: path \
 									boost \
 									protobuf3 \
 									zeromq \
-									folly
+									yaml-cpp
 
 
 third_party_all: third_party_core \
+									folly \
 									protobuf \
                   oprofile \
                   libconfig \
 									cuckoo \
-									yaml-cpp \
 									leveldb \
 									float_compressor \
 									openblas \
@@ -51,11 +51,12 @@ path:
 # ==================== boost ====================
 
 BOOST_SRC = $(THIRD_PARTY_CENTRAL)/boost_1_57_0.tar.bz2
-BOOST_INCLUDE = $(THIRD_PARTY_INCLUDE)/boost
+#BOOST_INCLUDE = $(THIRD_PARTY_INCLUDE)/boost
+BOOST_LIB = $(THIRD_PARTY_LIB)/libboost_program_options.so
 
-boost: path $(BOOST_INCLUDE)
+boost: path $(BOOST_LIB)
 
-$(BOOST_INCLUDE): $(BOOST_SRC)
+$(BOOST_LIB): $(BOOST_SRC)
 	tar jxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./bootstrap.sh \
@@ -230,11 +231,12 @@ $(LIBCONFIG_LIB): $(LIBCONFIG_SRC)
 
 # ==================== yaml-cpp ===================
 
-YAMLCPP_SRC = $(THIRD_PARTY_CENTRAL)/yaml-cpp-0.5.1.tar.gz
+YAMLCPP_SRC = $(THIRD_PARTY_CENTRAL)/yaml-cpp-release-0.5.2.tar.gz
 YAMLCPP_MK = $(THIRD_PARTY_CENTRAL)/yaml-cpp.mk
 YAMLCPP_LIB = $(THIRD_PARTY_LIB)/libyaml-cpp.a
 
-yaml-cpp: boost $(YAMLCPP_LIB)
+# TODO(wdai): add boost dependency
+yaml-cpp: $(YAMLCPP_LIB)
 
 $(YAMLCPP_LIB): $(YAMLCPP_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
