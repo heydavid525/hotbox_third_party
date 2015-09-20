@@ -233,7 +233,7 @@ $(LIBCONFIG_LIB): $(LIBCONFIG_SRC)
 
 YAMLCPP_SRC = $(THIRD_PARTY_CENTRAL)/yaml-cpp-release-0.5.2.tar.gz
 YAMLCPP_MK = $(THIRD_PARTY_CENTRAL)/yaml-cpp.mk
-YAMLCPP_LIB = $(THIRD_PARTY_LIB)/libyaml-cpp.a
+YAMLCPP_LIB = $(THIRD_PARTY_LIB)/libyaml-cpp.so
 
 # TODO(wdai): add boost dependency
 yaml-cpp: $(YAMLCPP_LIB)
@@ -242,7 +242,7 @@ $(YAMLCPP_LIB): $(YAMLCPP_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	make -f $(YAMLCPP_MK) BOOST_PREFIX=$(THIRD_PARTY) TARGET=$@; \
-	cp -r include/* $(THIRD_PARTY_INCLUDE)/
+	cp -r include/* $(THIRD_PARTY_INCLUDE)
 
 # =================== oprofile ===================
 # NOTE: need libpopt-dev binutils-dev
