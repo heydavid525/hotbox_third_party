@@ -16,7 +16,8 @@ third_party_core: path \
 									boost \
 									protobuf3 \
 									zeromq \
-									yaml-cpp
+									yaml-cpp \
+									dmlc
 
 
 third_party_all: third_party_core \
@@ -357,6 +358,21 @@ $(ZMQ_LIB): $(ZMQ_SRC)
 
 
 ####################### Unused #####################
+
+
+# ==================== dmlc ====================
+
+DMLC_SRC = $(THIRD_PARTY_CENTRAL)/dmlc-core-master.zip
+DMLC_LIB = $(THIRD_PARTY_LIB)/libdmlc.a
+
+dmlc: path $(DMLC_LIB)
+
+$(DMLC_LIB): $(DMLC_SRC)
+	unzip $< -d $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	make; \
+	cp ./libdmlc.* $(THIRD_PARTY_LIB)/; \
+	cp -r include/* $(THIRD_PARTY_INCLUDE)/
 
 
 
