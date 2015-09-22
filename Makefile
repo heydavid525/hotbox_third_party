@@ -5,31 +5,36 @@ THIRD_PARTY_INCLUDE = $(THIRD_PARTY)/include
 THIRD_PARTY_LIB = $(THIRD_PARTY)/lib
 THIRD_PARTY_BIN = $(THIRD_PARTY)/bin
 
+# where to do make check between make && make install;
+# 0 means no
+MAKE_CHECK = 0
+
 all: third_party_core
 
 third_party_core: path \
 	                gflags \
-                  glog \
+	glog \
 									gtest \
-                  gperftools \
+	gperftools \
 								  snappy \
 									boost \
 									protobuf3 \
 									zeromq \
 									yaml-cpp \
-									dmlc
+									dmlc \
+									hadoop
 
 
 third_party_all: third_party_core \
 									folly \
 									protobuf \
-                  oprofile \
-                  libconfig \
+	oprofile \
+	libconfig \
 									cuckoo \
 									leveldb \
 									float_compressor \
 									openblas \
-                  sparsehash \
+	sparsehash \
 									eigen \
 									fastapprox \
 									double-conversion
@@ -142,8 +147,11 @@ $(FOLLY_LIB): $(FOLLY_SRC)
 	CPPFLAGS=-I$(THIRD_PARTY_INCLUDE) LD_LIBRARY_PATH=$(THIRD_PARTY_LIB) \
 	LDFLAGS=-L$(THIRD_PARTY_LIB) ./configure --prefix=$(THIRD_PARTY) \
 	--with-boost-libdir=$(THIRD_PARTY_LIB); \
-	#make -j4 && make check && make install
+	ifeq ($(MAKE_CHECK),1) 
+	make -j4 && make check && make install
+	else
 	make -j4 && make install
+	endif
 
 # ===================== gflags ===================
 
@@ -218,6 +226,21 @@ $(LEVELDB_LIB): $(LEVELDB_SRC)
 	cp ./libleveldb.* $(THIRD_PARTY_LIB)/; \
 	cp -r include/* $(THIRD_PARTY_INCLUDE)/
 
+
+# ==================== hadoop/hdfs ===================
+
+HADOOP_SRC = $(THIRD_PARTY_CENTRAL)/hadoop-2.6.0.tar.gz
+HADOOP_LIB = $(THIRD_PARTY_LIB)/libhadoop.so
+
+hadoop: path $(HADOOP_LIB)
+
+$(HADOOP_LIB): $(HADOOP_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	LIBRARY_PATH=$(THIRD_PARTY_LIB):${LIBRARY_PATH}; \
+	cp lib/native/* $(THIRD_PARTY_LIB)/; \
+	cp -r include/* $(THIRD_PARTY_INCLUDE)/
+
 # ==================== libconfig ===================
 
 LIBCONFIG_SRC = $(THIRD_PARTY_CENTRAL)/libconfig-1.4.9.tar.gz
@@ -284,8 +307,11 @@ $(PROTOBUF_LIB): $(PROTOBUF_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./configure --prefix=$(THIRD_PARTY) && \
-	#make && make check && make install
-	make  && make install
+	ifeq ($(MAKE_CHECK),1) 
+	make && make check && make install
+	else
+	make && make install
+	endif
 
 # =================== protobuf3 ===================
 
@@ -299,8 +325,11 @@ $(PROTOBUF3_LIB): $(PROTOBUF3_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./autogen.sh ; \
 	./configure --prefix=$(THIRD_PARTY) && \
-	#make -j4 && make check && make install; \
+	ifeq ($(MAKE_CHECK),1) 
+	make -j4 && make check && make install; \
+	else
 	make -j4 && make install; \
+	endif
 	cd python; \
 	python set
 	up.py build; \
