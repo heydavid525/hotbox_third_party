@@ -142,7 +142,8 @@ $(FOLLY_LIB): $(FOLLY_SRC)
 	CPPFLAGS=-I$(THIRD_PARTY_INCLUDE) LD_LIBRARY_PATH=$(THIRD_PARTY_LIB) \
 	LDFLAGS=-L$(THIRD_PARTY_LIB) ./configure --prefix=$(THIRD_PARTY) \
 	--with-boost-libdir=$(THIRD_PARTY_LIB); \
-	make -j4 && make check && make install
+	#make -j4 && make check && make install
+	make -j4 && make install
 
 # ===================== gflags ===================
 
@@ -283,7 +284,8 @@ $(PROTOBUF_LIB): $(PROTOBUF_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./configure --prefix=$(THIRD_PARTY) && \
-	make && make check && make install
+	#make && make check && make install
+	make  && make install
 
 # =================== protobuf3 ===================
 
@@ -297,9 +299,11 @@ $(PROTOBUF3_LIB): $(PROTOBUF3_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./autogen.sh ; \
 	./configure --prefix=$(THIRD_PARTY) && \
-	make -j4 && make check && make install; \
+	#make -j4 && make check && make install; \
+	make -j4 && make install; \
 	cd python; \
-	python setup.py build; \
+	python set
+	up.py build; \
 	cp -r build/lib/* $(THIRD_PARTY_INCLUDE)
 
 # ================== sparsehash ==================
