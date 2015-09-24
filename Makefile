@@ -22,7 +22,8 @@ third_party_core: path \
 									zeromq \
 									yaml-cpp \
 									dmlc \
-									hadoop
+									hadoop \
+									rocksdb
 
 
 third_party_all: third_party_core \
@@ -147,11 +148,7 @@ $(FOLLY_LIB): $(FOLLY_SRC)
 	CPPFLAGS=-I$(THIRD_PARTY_INCLUDE) LD_LIBRARY_PATH=$(THIRD_PARTY_LIB) \
 	LDFLAGS=-L$(THIRD_PARTY_LIB) ./configure --prefix=$(THIRD_PARTY) \
 	--with-boost-libdir=$(THIRD_PARTY_LIB); \
-	ifeq ($(MAKE_CHECK),1) 
 	make -j4 && make check && make install
-	else
-	make -j4 && make install
-	endif
 
 # ===================== gflags ===================
 
@@ -226,6 +223,26 @@ $(LEVELDB_LIB): $(LEVELDB_SRC)
 	cp ./libleveldb.* $(THIRD_PARTY_LIB)/; \
 	cp -r include/* $(THIRD_PARTY_INCLUDE)/
 
+# ==================== rocksdb ===================
+
+ROCKSDB_SRC = $(THIRD_PARTY_CENTRAL)/rocksdb-master.zip
+ROCKSDB_LIB = $(THIRD_PARTY_LIB)/librocksdb.so
+
+rocksdb: path $(ROCKSDB_LIB)
+
+$(ROCKSDB_LIB): $(ROCKSDB_SRC)
+	unzip $< -d $(THIRD_PARTY_SRC)
+	if [ 'MAKE_CHECK' = 1 ]; then \
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	make shared _lib -j2 && make check; \
+	else \
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	make shared_lib -j2; \
+	echo "I made it."; \
+	fi	
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	cp ./librocksdb.* $(THIRD_PARTY_LIB)/; \
+	cp -r include/* $(THIRD_PARTY_INCLUDE)/
 
 # ==================== hadoop/hdfs ===================
 
@@ -307,11 +324,7 @@ $(PROTOBUF_LIB): $(PROTOBUF_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./configure --prefix=$(THIRD_PARTY) && \
-	ifeq ($(MAKE_CHECK),1) 
 	make && make check && make install
-	else
-	make && make install
-	endif
 
 # =================== protobuf3 ===================
 
@@ -325,11 +338,7 @@ $(PROTOBUF3_LIB): $(PROTOBUF3_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./autogen.sh ; \
 	./configure --prefix=$(THIRD_PARTY) && \
-	ifeq ($(MAKE_CHECK),1) 
 	make -j4 && make check && make install; \
-	else
-	make -j4 && make install; \
-	endif
 	cd python; \
 	python set
 	up.py build; \
