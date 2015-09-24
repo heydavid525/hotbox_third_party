@@ -5,6 +5,9 @@ THIRD_PARTY_INCLUDE = $(THIRD_PARTY)/include
 THIRD_PARTY_LIB = $(THIRD_PARTY)/lib
 THIRD_PARTY_BIN = $(THIRD_PARTY)/bin
 
+#export?
+LD_LIBRARY_PATH=$(THIRD_PARTY_LIB):LD_LIBRARY_PATH
+
 # where to do make check between make && make install;
 # 0 means no
 MAKE_CHECK = 0
@@ -232,6 +235,7 @@ rocksdb: path $(ROCKSDB_LIB)
 
 $(ROCKSDB_LIB): $(ROCKSDB_SRC)
 	unzip $< -d $(THIRD_PARTY_SRC)
+	LD_LIBRARY_PATH=$(THIRD_PARTY_LIB):LD_LIBRARY_PATH
 	if [ 'MAKE_CHECK' = 1 ]; then \
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	make shared _lib -j2 && make check; \
