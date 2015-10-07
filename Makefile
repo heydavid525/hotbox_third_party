@@ -414,7 +414,10 @@ DMLC_LIB = $(THIRD_PARTY_LIB)/libdmlc.a
 dmlc: path $(DMLC_LIB)
 
 $(DMLC_LIB): $(DMLC_SRC)
+	rm -rf $(THIRD_PARTY_SRC)/dmlc-core-master
 	unzip $< -d $(THIRD_PARTY_SRC)
+	cp $(THIRD_PARTY_CENTRAL)/dmlc_config.mk \
+		$(THIRD_PARTY_SRC)/dmlc-core-master/make/config.mk
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	make; \
 	cp ./libdmlc.* $(THIRD_PARTY_LIB)/; \
