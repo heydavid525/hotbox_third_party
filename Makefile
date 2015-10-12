@@ -344,8 +344,7 @@ $(PROTOBUF3_LIB): $(PROTOBUF3_SRC)
 	./configure --prefix=$(THIRD_PARTY) && \
 	make -j4 && make check && make install; \
 	cd python; \
-	python set
-	up.py build; \
+	python setup.py build; \
 	cp -r build/lib/* $(THIRD_PARTY_INCLUDE)
 
 # ================== sparsehash ==================
