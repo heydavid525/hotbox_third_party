@@ -410,15 +410,17 @@ $(ZMQ_LIB): $(ZMQ_SRC)
 DMLC_SRC = $(THIRD_PARTY_CENTRAL)/dmlc-core-master.zip
 DMLC_LIB = $(THIRD_PARTY_LIB)/libdmlc.a
 
-dmlc: path $(DMLC_LIB)
+dmlc: path glog $(DMLC_LIB)
 
 $(DMLC_LIB): $(DMLC_SRC)
 	rm -rf $(THIRD_PARTY_SRC)/dmlc-core-master
 	unzip $< -d $(THIRD_PARTY_SRC)
 	cp $(THIRD_PARTY_CENTRAL)/dmlc_config.mk \
 		$(THIRD_PARTY_SRC)/dmlc-core-master/make/config.mk
+	cp $(THIRD_PARTY_CENTRAL)/dmlc_makefile \
+		$(THIRD_PARTY_SRC)/dmlc-core-master/Makefile
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
-	make; \
+	make DEPS_PATH=$(THIRD_PARTY); \
 	cp ./libdmlc.* $(THIRD_PARTY_LIB)/; \
 	cp -r include/* $(THIRD_PARTY_INCLUDE)/
 
