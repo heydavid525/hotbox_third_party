@@ -237,7 +237,7 @@ $(ROCKSDB_LIB): $(ROCKSDB_SRC)
 	unzip $< -d $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	LD_LIBRARY_PATH=$(THIRD_PARTY_LIB):${LD_LIBRARY_PATH} \
-	CPLUS_INCLUDE_PATH=$(THIRD_PARTY_INCLUDE):${CPLUS_INCLUDE_PATH} \
+	CPATH=$(THIRD_PARTY_INCLUDE):${CPATH} \
 	LIBRARY_PATH=$(THIRD_PARTY_LIB) \
 	make shared_lib -j4; \
 	cp ./librocksdb.* $(THIRD_PARTY_LIB)/; \
