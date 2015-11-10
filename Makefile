@@ -12,8 +12,20 @@ THIRD_PARTY_BIN = $(THIRD_PARTY)/bin
 # 0 means no
 MAKE_CHECK = 0
 
-all: third_party_core
+all: third_party_special
 
+# Only the third_party that are not in ubuntu 14 standard distribution are
+# built in third_party_special. Get the rest with
+#
+# sudo apt-get install libgflags-dev libgoogle-glog-dev
+# libgoogle-perftools-dev libsnappy-dev libyaml-cpp-dev libboost1.55-dev
+# libboost-filesystem1.55-dev  libgtest-dev unzip python-setuptools autoconf
+third_party_special: path \
+										 protobuf3 \
+										 dmlc \
+										 zeromq
+
+# Build needed third_party from ground up. Would take 1+hr.
 third_party_core: path \
 	                gflags \
 	glog \
@@ -338,9 +350,9 @@ $(PROTOBUF3_LIB): $(PROTOBUF3_SRC)
 	./autogen.sh ; \
 	./configure --prefix=$(THIRD_PARTY) && \
 	make -j4 && make check && make install; \
-	cd python; \
-	python setup.py build; \
-	cp -r build/lib/* $(THIRD_PARTY_INCLUDE)
+	cd python && \
+	python setup.py build && \
+	cp -r build/lib*/* $(THIRD_PARTY_INCLUDE)
 
 # ================== sparsehash ==================
 
@@ -405,7 +417,7 @@ $(ZMQ_LIB): $(ZMQ_SRC)
 DMLC_SRC = $(THIRD_PARTY_CENTRAL)/dmlc-core-master.zip
 DMLC_LIB = $(THIRD_PARTY_LIB)/libdmlc.a
 
-dmlc: path glog $(DMLC_LIB)
+dmlc: path $(DMLC_LIB)
 
 $(DMLC_LIB): $(DMLC_SRC)
 	rm -rf $(THIRD_PARTY_SRC)/dmlc-core-master
