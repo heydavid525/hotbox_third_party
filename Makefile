@@ -17,9 +17,10 @@ all: third_party_special
 # Only the third_party that are not in ubuntu 14 standard distribution are
 # built in third_party_special. Get the rest with
 #
-# sudo apt-get install libgflags-dev libgoogle-glog-dev
+# sudo apt-get -y install libgflags-dev libgoogle-glog-dev
 # libgoogle-perftools-dev libsnappy-dev libyaml-cpp-dev libboost1.55-dev
-# libboost-filesystem1.55-dev  libgtest-dev unzip python-setuptools autoconf
+# libboost-filesystem1.55-dev libgtest-dev unzip python-setuptools autoconf
+# python-zmq python-yaml
 third_party_special: path \
 										 protobuf3 \
 										 dmlc \
