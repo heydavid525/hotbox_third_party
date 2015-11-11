@@ -24,13 +24,13 @@ all: third_party_special
 third_party_special: path \
 										 protobuf3 \
 										 dmlc \
-										 zeromq
+										 zeromq \
+										 gtest
 
 # Build needed third_party from ground up. Would take 1+hr.
 third_party_core: third_party_special \
 	                gflags \
 									glog \
-									gtest \
 									gperftools \
 								  snappy \
 									boost \
