@@ -27,21 +27,18 @@ third_party_special: path \
 										 zeromq
 
 # Build needed third_party from ground up. Would take 1+hr.
-third_party_core: path \
+third_party_core: third_party_special \
 	                gflags \
-	glog \
+									glog \
 									gtest \
-	gperftools \
+									gperftools \
 								  snappy \
 									boost \
-									protobuf3 \
-									zeromq \
-									yaml-cpp \
-									dmlc \
-									hadoop \
+									yaml-cpp
 
 
 third_party_all: third_party_core \
+									hadoop \
 									folly \
 									protobuf \
 	oprofile \
