@@ -26,7 +26,6 @@ third_party_core: path \
 									yaml-cpp \
 									dmlc \
 									hadoop \
-									rocksdb
 
 
 third_party_all: third_party_core \
@@ -40,6 +39,7 @@ third_party_all: third_party_core \
 									openblas \
 	sparsehash \
 									eigen \
+									rocksdb \
 									fastapprox \
 									double-conversion
 
@@ -234,6 +234,7 @@ ROCKSDB_LIB = $(THIRD_PARTY_LIB)/librocksdb.so
 rocksdb: path $(ROCKSDB_LIB)
 
 $(ROCKSDB_LIB): $(ROCKSDB_SRC)
+	rm -r $(THIRD_PARTY_SRC)/rocksdb-master
 	unzip $< -d $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	LD_LIBRARY_PATH=$(THIRD_PARTY_LIB):${LD_LIBRARY_PATH} \
