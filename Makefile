@@ -19,8 +19,12 @@ all: third_party_special
 #
 # sudo apt-get -y install libgflags-dev libgoogle-glog-dev
 # libgoogle-perftools-dev libsnappy-dev libyaml-cpp-dev libboost1.55-dev
-# libboost-filesystem1.55-dev libgtest-dev unzip python-setuptools autoconf
+# libboost-filesystem1.55-dev unzip python-setuptools autoconf
 # python-zmq python-yaml
+#
+# sudo apt-get install libgtest-dev only gets gtest source but not binary. So
+# we build here. See for details
+# http://askubuntu.com/questions/145887/why-no-library-files-installed-for-google-test
 third_party_special: path \
 										 protobuf3 \
 										 dmlc \
