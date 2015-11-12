@@ -219,7 +219,7 @@ $(GTEST_LIB): $(GTEST_SRC)
 	rm -rf $(THIRD_PARTY_INCLUDE)/gtest
 	unzip $< -d $(THIRD_PARTY_SRC)
 	cd $(basename $(THIRD_PARTY_SRC)/$(notdir $<))/make; \
-	make; make gtest.a; \
+	make -j; make -j gtest.a; \
 	./sample1_unittest; \
 	cp -r ../include/* $(THIRD_PARTY_INCLUDE)/; \
 	cp gtest_main.a $@; \
@@ -394,7 +394,7 @@ $(ZMQ_LIB): $(ZMQ_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./configure --prefix=$(THIRD_PARTY) --without-libsodium; \
-	make install
+	make -j install
 	cp $(THIRD_PARTY_CENTRAL)/zmq.hpp $(THIRD_PARTY_INCLUDE)
 
 # ==================== zeromq-3.2.5 ====================
@@ -430,7 +430,7 @@ $(DMLC_LIB): $(DMLC_SRC)
 	cp $(THIRD_PARTY_CENTRAL)/dmlc_makefile \
 		$(THIRD_PARTY_SRC)/dmlc-core-master/Makefile
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
-	make DEPS_PATH=$(THIRD_PARTY); \
+	make -j DEPS_PATH=$(THIRD_PARTY); \
 	cp ./libdmlc.* $(THIRD_PARTY_LIB)/; \
 	cp -r include/* $(THIRD_PARTY_INCLUDE)/
 
