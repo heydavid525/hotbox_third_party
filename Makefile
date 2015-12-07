@@ -38,7 +38,8 @@ third_party_core: third_party_special \
 									gperftools \
 								  snappy \
 									boost \
-									yaml-cpp
+									yaml-cpp \
+									rocksdb
 
 
 third_party_all: third_party_core \
@@ -248,7 +249,7 @@ ROCKSDB_LIB = $(THIRD_PARTY_LIB)/librocksdb.so
 rocksdb: path $(ROCKSDB_LIB)
 
 $(ROCKSDB_LIB): $(ROCKSDB_SRC)
-	rm -r $(THIRD_PARTY_SRC)/rocksdb-master
+	rm -rf $(THIRD_PARTY_SRC)/rocksdb-master
 	unzip $< -d $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	LD_LIBRARY_PATH=$(THIRD_PARTY_LIB):${LD_LIBRARY_PATH} \
