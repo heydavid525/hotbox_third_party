@@ -32,10 +32,11 @@ third_party_special: path \
 										 gtest
 
 # Build needed third_party from ground up. Would take 1+hr.
-third_party_core: third_party_special \
-	                gflags \
+third_party_core: gflags \
 									glog \
+									third_party_special \
 									gperftools \
+									rocksdb \
 								  snappy \
 									boost \
 									yaml-cpp \
