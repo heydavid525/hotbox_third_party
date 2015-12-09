@@ -346,11 +346,14 @@ $(PROTOBUF_LIB): $(PROTOBUF_SRC)
 
 PROTOBUF3_SRC = $(THIRD_PARTY_CENTRAL)/protobuf-3.0.0-beta-1.tar.gz
 PROTOBUF3_LIB = $(THIRD_PARTY_LIB)/libprotobuf-lite.a
+GMOCK_SRC = $(THIRD_PARTY_CENTRAL)/gmock-1.7.0.zip
 
 protobuf3: path $(PROTOBUF3_LIB)
 
 $(PROTOBUF3_LIB): $(PROTOBUF3_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
+	unzip -q $(GMOCK_SRC)
+	mv gmock-1.7.0 $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<)))/gmock
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	./autogen.sh ; \
 	./configure --prefix=$(THIRD_PARTY) && \
