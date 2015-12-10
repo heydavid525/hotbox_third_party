@@ -260,6 +260,25 @@ $(ROCKSDB_LIB): $(ROCKSDB_SRC)
 	cp ./librocksdb.* $(THIRD_PARTY_LIB)/; \
 	cp -r include/* $(THIRD_PARTY_INCLUDE)/
 
+# ========= rocksdb with hdfs error fixed===========
+ 
+ROCKSDB_HDFS_SRC = $(THIRD_PARTY_CENTRAL)/rocksdb-hdfs.zip
+ROCKSDB_HDFS_LIB = $(THIRD_PARTY_SRC)/rocksdb-hdfs/librocksdb.so
+ 
+rocksdb_hdfs: path $(ROCKSDB_HDFS_LIB)
+	cp -r $(THIRD_PARTY_SRC)/rocksdb-hdfs/librocksdb.* $(THIRD_PARTY_LIB)/; \
+	cp -r $(THIRD_PARTY_SRC)/rocksdb-hdfs/include/* $(THIRD_PARTY_INCLUDE)/
+
+$(ROCKSDB_HDFS_LIB): $(ROCKSDB_HDFS_SRC)
+	rm -rf $(THIRD_PARTY_SRC)/rocksdb-hdfs
+	unzip $< -d $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	LD_LIBRARY_PATH=$(THIRD_PARTY_LIB):${LD_LIBRARY_PATH} \
+	CPATH=$(THIRD_PARTY_INCLUDE):${CPATH} \
+	LIBRARY_PATH=$(THIRD_PARTY_LIB) \
+	USE_HDFS=1 \
+	make shared_lib -j4;
+
 # ==================== hadoop/hdfs ===================
 
 HADOOP_SRC = $(THIRD_PARTY_CENTRAL)/hadoop-2.6.0.tar.gz
