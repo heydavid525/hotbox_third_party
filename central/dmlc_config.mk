@@ -9,12 +9,6 @@
 #  - type make or make -j n on each of the folder
 #----------------------------------------------------
 
-# Suppose it's in $(PROJECT_HB)/third_party/central/dmlc_config.mk
-# and copied to  $(PROJECT_HB)/third_party/src/dmlc-core-master/make/config.mk
-PROJECT := $(shell readlink $(dir $(lastword $(MAKEFILE_LIST))) -f)
-PROJECT_HB = $(PROJECT)/../../../..
-include $(PROJECT_HB)/config.mk
-
 # choice of compiler
 export CC = gcc
 export CXX = g++
@@ -26,7 +20,7 @@ WITH_FPIC = 1
 
 # Integrated parts will be commented out.
 # whether use HDFS support during compile
-# USE_HDFS = 1
+USE_HDFS = 0
 
 # whether use AWS S3 support during compile
 USE_S3 = 0
