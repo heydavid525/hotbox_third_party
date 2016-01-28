@@ -171,7 +171,7 @@ $(FOLLY_LIB): $(FOLLY_SRC)
 
 # ===================== gflags ===================
 
-GFLAGS_SRC = $(THIRD_PARTY_CENTRAL)/gflags-2.0.tar.gz
+GFLAGS_SRC = $(THIRD_PARTY_CENTRAL)/gflags-2.1.2.tar.gz
 GFLAGS_LIB = $(THIRD_PARTY_LIB)/libgflags.so
 
 gflags: path $(GFLAGS_LIB)
@@ -179,8 +179,15 @@ gflags: path $(GFLAGS_LIB)
 $(GFLAGS_LIB): $(GFLAGS_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
-	./configure --prefix=$(THIRD_PARTY); \
-	make install
+	mkdir build && cd build; \
+	cmake -DBUILD_SHARED_LIBS=YES -DCMAKE_INSTALL_PREFIX=$(THIRD_PARTY) ..; \
+	make -j && make install
+
+#$(GFLAGS_LIB): $(GFLAGS_SRC)
+#	tar zxf $< -C $(THIRD_PARTY_SRC)
+#	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+#	./configure --prefix=$(THIRD_PARTY); \
+#	make install
 
 # ===================== glog =====================
 
