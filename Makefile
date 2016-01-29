@@ -463,7 +463,8 @@ $(DMLC_LIB): $(DMLC_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
 	make -j DEPS_PATH=$(THIRD_PARTY); \
 	cp ./libdmlc.* $(THIRD_PARTY_LIB)/; \
-	cp -r include/* $(THIRD_PARTY_INCLUDE)/
+	cp -r include/* $(THIRD_PARTY_INCLUDE)/;
+	cp -r $(THIRD_PARTY_CENTRAL)/dmlc/logging.h $(THIRD_PARTY_INCLUDE)/dmlc/
 
 
 
