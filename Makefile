@@ -191,7 +191,7 @@ $(GFLAGS_LIB): $(GFLAGS_SRC)
 
 # ===================== glog =====================
 
-GLOG_SRC = $(THIRD_PARTY_CENTRAL)/glog-0.3.3.tar.gz
+GLOG_SRC = $(THIRD_PARTY_CENTRAL)/glog-0.3.4.tar.gz
 GLOG_LIB = $(THIRD_PARTY_LIB)/libglog.so
 
 glog: $(GLOG_LIB)
