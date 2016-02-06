@@ -36,7 +36,6 @@ third_party_core: gflags \
 									glog \
 									third_party_special \
 									gperftools \
-									rocksdb \
 								  snappy \
 									boost \
 									yaml-cpp \
@@ -179,7 +178,7 @@ gflags: path $(GFLAGS_LIB)
 $(GFLAGS_LIB): $(GFLAGS_SRC)
 	tar zxf $< -C $(THIRD_PARTY_SRC)
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
-	mkdir build && cd build; \
+	mkdir -p build && cd build; \
 	cmake -DBUILD_SHARED_LIBS=YES -DCMAKE_INSTALL_PREFIX=$(THIRD_PARTY) ..; \
 	make -j && make install
 
@@ -331,7 +330,7 @@ $(YAMLCPP_LIB): $(YAMLCPP_SRC)
 # =================== oprofile ===================
 # NOTE: need libpopt-dev binutils-dev
 
-OPROFILE_SRC = $(THIRD_PARTY_CENTRAL)/oprofile-1.0.0.tar.gz
+OPROFILE_SRC = $(THIRD_PARTY_CENTRAL)/oprofile-1.1.0.tar.gz
 OPROFILE_LIB = $(THIRD_PARTY_LIB)/libprofiler.so
 
 oprofile: path $(OPROFILE_LIB)
