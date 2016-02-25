@@ -457,6 +457,8 @@ $(DMLC_LIB): $(DMLC_SRC)
 	unzip $< -d $(THIRD_PARTY_SRC)
 	cp $(THIRD_PARTY_CENTRAL)/dmlc_config.mk \
 		$(THIRD_PARTY_SRC)/dmlc-core-master/make/config.mk
+	cp $(THIRD_PARTY_CENTRAL)/dmlc.mk \
+		$(THIRD_PARTY_SRC)/dmlc-core-master/make/dmlc.mk
 	cp $(THIRD_PARTY_CENTRAL)/dmlc_makefile \
 		$(THIRD_PARTY_SRC)/dmlc-core-master/Makefile
 	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
