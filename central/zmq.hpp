@@ -104,7 +104,9 @@ namespace zmq
     {
     public:
 
-        error_t () : errnum (zmq_errno ()) {}
+        error_t () : errnum (zmq_errno ()), lineno(-1) {}
+
+        error_t (int ln) : errnum(zmq_errno ()), lineno(ln) {}
 
         virtual const char *what () const throw ()
         {
@@ -117,15 +119,19 @@ namespace zmq
         }
 
     private:
-
+        
         int errnum;
+        int lineno;
     };
 
     inline int poll (zmq_pollitem_t const* items_, int nitems_, long timeout_ = -1)
     {
-        int rc = zmq_poll (const_cast<zmq_pollitem_t*>(items_), nitems_, timeout_);
-        if (rc < 0)
-            throw error_t ();
+        int rc;
+        do {
+            rc = zmq_poll (const_cast<zmq_pollitem_t*>(items_), nitems_, timeout_);
+            if (rc < 0 && zmq_errno() != EINTR)
+                throw error_t (__LINE__);
+        } while (rc < 0);
         return rc;
     }
 
@@ -157,7 +163,7 @@ namespace zmq
     {
         int rc = zmq_proxy (frontend, backend, capture);
         if (rc != 0)
-            throw error_t ();
+            throw error_t (__LINE__);
     }
     
 #ifdef ZMQ_HAS_PROXY_STEERABLE
@@ -165,7 +171,7 @@ namespace zmq
     {
         int rc = zmq_proxy_steerable (frontend, backend, capture, control);
         if (rc != 0)
-            throw error_t ();
+            throw error_t (__LINE__);
     }
 #endif
     
@@ -193,14 +199,14 @@ namespace zmq
         {
             int rc = zmq_msg_init (&msg);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
         inline explicit message_t (size_t size_)
         {
             int rc = zmq_msg_init_size (&msg, size_);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
         template<typename I> message_t(I first, I last):
@@ -212,7 +218,7 @@ namespace zmq
             size_type const size_ = std::distance(first, last);
             int const rc = zmq_msg_init_size (&msg, size_);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
             std::copy(first, last, static_cast<pointer_t>(zmq_msg_data (&msg)) );
         }
 
@@ -221,7 +227,7 @@ namespace zmq
         {
             int rc = zmq_msg_init_data (&msg, data_, size_, ffn_, hint_);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
 #ifdef ZMQ_HAS_RVALUE_REFS
@@ -229,7 +235,7 @@ namespace zmq
         {
             int rc = zmq_msg_init (&rhs.msg);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
         inline message_t &operator = (message_t &&rhs) ZMQ_NOTHROW
@@ -249,20 +255,20 @@ namespace zmq
         {
             int rc = zmq_msg_close (&msg);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
             rc = zmq_msg_init (&msg);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
         inline void rebuild (size_t size_)
         {
             int rc = zmq_msg_close (&msg);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
             rc = zmq_msg_init_size (&msg, size_);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
         inline void rebuild (void *data_, size_t size_, free_fn *ffn_,
@@ -270,24 +276,24 @@ namespace zmq
         {
             int rc = zmq_msg_close (&msg);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
             rc = zmq_msg_init_data (&msg, data_, size_, ffn_, hint_);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
         inline void move (message_t const *msg_)
         {
             int rc = zmq_msg_move (&msg, const_cast<zmq_msg_t*>(&(msg_->msg)));
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
         inline void copy (message_t const *msg_)
         {
             int rc = zmq_msg_copy (&msg, const_cast<zmq_msg_t*>(&(msg_->msg)));
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
         inline bool more () const ZMQ_NOTHROW
@@ -341,7 +347,7 @@ namespace zmq
         {
             ptr = zmq_ctx_new ();
             if (ptr == NULL)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
 
@@ -349,7 +355,7 @@ namespace zmq
         {
             ptr = zmq_ctx_new ();
             if (ptr == NULL)
-                throw error_t ();
+                throw error_t (__LINE__);
 
             int rc = zmq_ctx_set (ptr, ZMQ_IO_THREADS, io_threads_);
             ZMQ_ASSERT (rc == 0);
@@ -483,17 +489,23 @@ namespace zmq
         inline void setsockopt (int option_, const void *optval_,
             size_t optvallen_)
         {
-            int rc = zmq_setsockopt (ptr, option_, optval_, optvallen_);
-            if (rc != 0)
-                throw error_t ();
+            int rc;
+            do {
+                rc = zmq_setsockopt (ptr, option_, optval_, optvallen_);
+                if (rc != 0 && zmq_errno() != EINTR)
+                    throw error_t (__LINE__);
+            } while (rc < 0);
         }
 
         inline void getsockopt (int option_, void *optval_,
             size_t *optvallen_)
         {
-            int rc = zmq_getsockopt (ptr, option_, optval_, optvallen_);
-            if (rc != 0)
-                throw error_t ();
+            int rc;
+            do {
+            rc = zmq_getsockopt (ptr, option_, optval_, optvallen_);
+            if (rc != 0 && zmq_errno() != EINTR)
+                throw error_t (__LINE__);
+            } while (rc < 0);
         }
 
         template<typename T> T getsockopt(int option_)
@@ -511,9 +523,12 @@ namespace zmq
 
         inline void bind (const char *addr_)
         {
-            int rc = zmq_bind (ptr, addr_);
-            if (rc != 0)
-                throw error_t ();
+            int rc;
+            do {
+                rc = zmq_bind (ptr, addr_);
+                if (rc != 0 && zmq_errno() != EINTR)
+                    throw error_t (__LINE__);
+            } while (rc < 0);
         }
 
         inline void unbind(std::string const& addr)
@@ -523,9 +538,12 @@ namespace zmq
 
         inline void unbind (const char *addr_)
         {
-            int rc = zmq_unbind (ptr, addr_);
-            if (rc != 0)
-                throw error_t ();
+            int rc;
+            do {
+                rc = zmq_unbind (ptr, addr_);
+                if (rc != 0 && zmq_errno() != EINTR)
+                    throw error_t (__LINE__);
+            } while (rc < 0);
         }
 
         inline void connect(std::string const& addr)
@@ -535,9 +553,12 @@ namespace zmq
 
         inline void connect (const char *addr_)
         {
-            int rc = zmq_connect (ptr, addr_);
-            if (rc != 0)
-                throw error_t ();
+            int rc;
+            do {
+                rc = zmq_connect (ptr, addr_);
+                if (rc != 0 && zmq_errno() != EINTR)
+                    throw error_t (__LINE__);
+            } while (rc < 0);
         }
 
         inline void disconnect(std::string const& addr)
@@ -547,9 +568,12 @@ namespace zmq
 
         inline void disconnect (const char *addr_)
         {
-            int rc = zmq_disconnect (ptr, addr_);
-            if (rc != 0)
-                throw error_t ();
+            int rc;
+            do {
+                rc = zmq_disconnect (ptr, addr_);
+                if (rc != 0 && zmq_errno() != EINTR)
+                    throw error_t (__LINE__);
+            } while (rc < 0);
         }
 
         inline bool connected() const ZMQ_NOTHROW
@@ -559,22 +583,28 @@ namespace zmq
         
         inline size_t send (const void *buf_, size_t len_, int flags_ = 0)
         {
-            int nbytes = zmq_send (ptr, buf_, len_, flags_);
-            if (nbytes >= 0)
-                return (size_t) nbytes;
-            if (zmq_errno () == EAGAIN)
-                return 0;
-            throw error_t ();
+            int nbytes;
+            do {
+              nbytes = zmq_send (ptr, buf_, len_, flags_);
+              if (nbytes >= 0)
+                  return (size_t) nbytes;
+              if (zmq_errno () == EAGAIN)
+                  return 0;
+            } while (nbytes < 0 && zmq_errno() == EINTR);
+            throw error_t (__LINE__);
         }
 
         inline bool send (message_t &msg_, int flags_ = 0)
         {
-            int nbytes = zmq_msg_send (&(msg_.msg), ptr, flags_);
-            if (nbytes >= 0)
-                return true;
-            if (zmq_errno () == EAGAIN)
-                return false;
-            throw error_t ();
+            int nbytes;
+            do {
+                nbytes = zmq_msg_send (&(msg_.msg), ptr, flags_);
+                if (nbytes >= 0)
+                    return true;
+                if (zmq_errno () == EAGAIN)
+                    return false;
+            } while (nbytes < 0 && zmq_errno() == EINTR);
+            throw error_t (__LINE__);
         }
 
         template<typename I> bool send(I first, I last, int flags_=0)
@@ -592,22 +622,28 @@ namespace zmq
 
         inline size_t recv (void *buf_, size_t len_, int flags_ = 0)
         {
-            int nbytes = zmq_recv (ptr, buf_, len_, flags_);
-            if (nbytes >= 0)
-                return (size_t) nbytes;
-            if (zmq_errno () == EAGAIN)
-                return 0;
-            throw error_t ();
+            int nbytes;
+            do {
+                nbytes = zmq_recv (ptr, buf_, len_, flags_);
+                if (nbytes >= 0)
+                    return (size_t) nbytes;
+                if (zmq_errno () == EAGAIN)
+                    return 0;
+            } while (nbytes < 0 && zmq_errno() == EINTR);
+            throw error_t (__LINE__);
         }
 
         inline bool recv (message_t *msg_, int flags_ = 0)
         {
-            int nbytes = zmq_msg_recv (&(msg_->msg), ptr, flags_);
-            if (nbytes >= 0)
-                return true;
-            if (zmq_errno () == EAGAIN)
-                return false;
-            throw error_t ();
+            int nbytes;
+            do {
+                nbytes = zmq_msg_recv (&(msg_->msg), ptr, flags_);
+                if (nbytes >= 0)
+                    return true;
+                if (zmq_errno () == EAGAIN)
+                    return false;
+            } while (nbytes < 0 && zmq_errno() == EINTR);
+            throw error_t (__LINE__);
         }
         
     private:
@@ -616,7 +652,7 @@ namespace zmq
             ctxptr = context_.ptr;
             ptr = zmq_socket (context_.ptr, type_ );
             if (ptr == NULL)
-                throw error_t ();
+                throw error_t (__LINE__);
         }
 
         void *ptr;
@@ -641,7 +677,7 @@ namespace zmq
         {
             int rc = zmq_socket_monitor(socket.ptr, addr_, events);
             if (rc != 0)
-                throw error_t ();
+                throw error_t (__LINE__);
 
             socketPtr = socket.ptr;
             void *s = zmq_socket (socket.ctxptr, ZMQ_PAIR);
