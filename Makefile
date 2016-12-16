@@ -75,7 +75,7 @@ path:
 
 # ==================== boost ====================
 
-BOOST_SRC = $(THIRD_PARTY_CENTRAL)/boost_1_57_0.tar.bz2
+BOOST_SRC = $(THIRD_PARTY_CENTRAL)/boost_1_61_0.tar.bz2
 #BOOST_INCLUDE = $(THIRD_PARTY_INCLUDE)/boost
 BOOST_LIB = $(THIRD_PARTY_LIB)/libboost_program_options.so
 
@@ -165,7 +165,7 @@ $(FOLLY_LIB): $(FOLLY_SRC)
 	autoreconf -ivf; \
 	CPPFLAGS=-I$(THIRD_PARTY_INCLUDE) LD_LIBRARY_PATH=$(THIRD_PARTY_LIB) \
 	LDFLAGS=-L$(THIRD_PARTY_LIB) ./configure --prefix=$(THIRD_PARTY) \
-	--with-boost-libdir=$(THIRD_PARTY_LIB); \
+	--with-boost-libdir=$(THIRD_PARTY_LIB);
 	make -j4 && make check && make install
 
 # ===================== gflags ===================
@@ -232,6 +232,31 @@ $(GTEST_LIB): $(GTEST_SRC)
 	cp -r ../include/* $(THIRD_PARTY_INCLUDE)/; \
 	cp gtest_main.a $@; \
 	cp gtest.a $(GTEST_LIB2)
+
+# ==================== hiredis ===================
+
+HIREDIS_SRC = $(THIRD_PARTY_CENTRAL)/hiredis-0.13.3.tar.gz
+HIREDIS_LIB = $(THIRD_PARTY_LIB)/redis.so
+
+redis: path $(HIREDIS_LIB)
+
+$(HIREDIS_LIB): $(HIREDIS_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	make; sudo make install
+
+# ==================== redis ===================
+
+REDIS_SRC = $(THIRD_PARTY_CENTRAL)/redis-stable.tar.gz
+REDIS_LIB = $(THIRD_PARTY_LIB)/libhiredis.so
+
+redis: path $(REDIS_LIB)
+
+$(REDIS_LIB): $(REDIS_SRC)
+	tar zxf $< -C $(THIRD_PARTY_SRC)
+	cd $(basename $(basename $(THIRD_PARTY_SRC)/$(notdir $<))); \
+	LIBRARY_PATH=$(THIRD_PARTY_LIB):${LIBRARY_PATH} \
+	make -j ; make PREFIX=$(THIRD_PARTY) install
 
 # ==================== leveldb ===================
 
@@ -415,7 +440,7 @@ $(SNAPPY_LIB): $(SNAPPY_SRC)
 
 # ==================== zeromq ====================
 
-ZMQ_SRC = $(THIRD_PARTY_CENTRAL)/zeromq-4.1.2.tar.gz
+ZMQ_SRC = $(THIRD_PARTY_CENTRAL)/zeromq-4.2.0.tar.gz
 ZMQ_LIB = $(THIRD_PARTY_LIB)/libzmq.so
 
 zeromq: path $(ZMQ_LIB)

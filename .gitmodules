@@ -1,0 +1,3 @@
+[submodule "central/folly"]
+	path = central/folly
+	url = https://github.com/facebook/folly.git
